@@ -410,6 +410,39 @@ struct nvme_ns {
 	uint8_t uuid[16];
 };
 
+%inline %{
+typedef struct {
+    uint8_t		opcode;
+	uint8_t		flags;
+	uint16_t	rsvd;
+	uint32_t	nsid;
+	uint32_t	cdw2;
+	uint32_t	cdw3;
+	uint32_t	cdw10;
+	uint32_t	cdw11;
+	uint32_t	cdw12;
+	uint32_t	cdw13;
+	uint32_t	cdw14;
+	uint32_t	cdw15;
+	uint32_t	data_len;
+	uint64_t	data;
+	uint32_t	metadata_len;
+	uint64_t	metadata;
+	uint32_t	timeout_ms;
+	uint64_t	result;
+} ndp_passthru_cmd;
+
+int ndp_passthru(int fd, ndp_passthru_cmd* cmd) {
+	return nvme_io_passthru64(fd, (__u8)cmd->opcode, (__u8)cmd->flags, 
+			(__u16)cmd->rsvd, (__u32)cmd->nsid, (__u32)cmd->cdw2, (__u32)cmd->cdw3, 
+			(__u32)cmd->cdw10, (__u32)cmd->cdw11, (__u32)cmd->cdw12, 
+			(__u32)cmd->cdw13, (__u32)cmd->cdw14, (__u32)cmd->cdw15, 
+			(__u32)cmd->data_len, (void*)cmd->data, (__u32)cmd->metadata_len, (void*)cmd->metadata,
+			(__u32)cmd->timeout_ms, &cmd->result);
+}
+%}
+int nvme_open(const char* dev);
+
 %extend nvme_root {
 	nvme_root(const char *config_file = NULL) {
 		return nvme_scan(config_file);
