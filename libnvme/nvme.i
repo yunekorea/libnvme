@@ -10,6 +10,7 @@
 %feature("autodoc", "1");
 
 %include "exception.i"
+%include "stdint.i"
 
 %allowexception;
 
