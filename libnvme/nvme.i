@@ -413,7 +413,7 @@ struct nvme_ns {
 
 %inline %{
 typedef struct {
-    uint8_t		opcode;
+  uint8_t		opcode;
 	uint8_t		flags;
 	uint16_t	rsvd;
 	uint32_t	nsid;
@@ -434,11 +434,24 @@ typedef struct {
 } ndp_passthru_cmd;
 
 int ndp_passthru(int fd, ndp_passthru_cmd* cmd) {
+	void* dataptr;
+	void* metadataptr;
+
+	if(cmd->data == 0)
+		dataptr = NULL;
+	else
+		dataptr = (void*)cmd->data;
+
+	if(cmd->metadata == 0)
+		metadataptr = NULL;
+	else
+		metadataptr = (void*)cmd->metadata;
+	
 	return nvme_io_passthru64(fd, (__u8)cmd->opcode, (__u8)cmd->flags, 
 			(__u16)cmd->rsvd, (__u32)cmd->nsid, (__u32)cmd->cdw2, (__u32)cmd->cdw3, 
 			(__u32)cmd->cdw10, (__u32)cmd->cdw11, (__u32)cmd->cdw12, 
 			(__u32)cmd->cdw13, (__u32)cmd->cdw14, (__u32)cmd->cdw15, 
-			(__u32)cmd->data_len, (void*)cmd->data, (__u32)cmd->metadata_len, (void*)cmd->metadata,
+			(__u32)cmd->data_len, dataptr, (__u32)cmd->metadata_len, metadataptr,
 			(__u32)cmd->timeout_ms, &cmd->result);
 }
 %}
