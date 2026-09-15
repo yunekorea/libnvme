@@ -6,6 +6,13 @@
  * Authors: Hannes Reinecke <hare@suse.de>
  */
 
+%begin %{
+// For Python 3.12 and above
+#ifdef fallthrough
+#undef fallthrough
+#endif
+%}
+
 %module(docstring="Python bindings for libnvme") nvme
 %feature("autodoc", "1");
 
