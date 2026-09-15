@@ -37,6 +37,7 @@
 	#include "nvme/ioctl.h"
 	#include "nvme/types.h"
 	#include "nvme/nbft.h"
+	#include "nvme/linux.h"
 
 	static int host_iter_err = 0;
 	static int subsys_iter_err = 0;
